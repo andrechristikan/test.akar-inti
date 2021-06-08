@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CartEntity } from './cart.schema';
 import { CartDocument } from './cart.interface';
+import { ProductEntity } from 'src/product/product.schema';
 
 @Injectable()
 export class CartService {
@@ -27,6 +28,23 @@ export class CartService {
         return this.cartModel.findById(cartId).lean();
     }
 
+    async findOne(
+        find?: Record<string, any>,
+        populate?: boolean
+    ): Promise<CartDocument> {
+        const cart = this.cartModel.findOne(find);
+
+        if (populate) {
+            cart.populate({
+                path: 'products',
+                model: ProductEntity.name,
+                match: { isActive: true }
+            });
+        }
+
+        return cart.lean();
+    }
+
     async create(userId: string): Promise<CartDocument> {
         const create: CartDocument = new this.cartModel({
             user: Types.ObjectId(userId),
@@ -36,33 +54,16 @@ export class CartService {
         return create.save();
     }
 
-    async addItem(
+    async updateProducts(
         cartId: string,
-        products: Record<string, any>[],
-        newItem: Record<string, any>
+        products: Record<string, any>[]
     ): Promise<CartDocument> {
         return this.cartModel.updateOne(
             {
-                _id: cartId
+                _id: Types.ObjectId(cartId)
             },
             {
-                products: products.push(newItem)
-            }
-        );
-    }
-
-    async removeItem(
-        cartId: string,
-        products: Record<string, any>[],
-        newItem: Record<string, any>
-    ): Promise<CartDocument> {
-        const index = products.indexOf((val) => val === newItem);
-        return this.cartModel.updateOne(
-            {
-                _id: cartId
-            },
-            {
-                products: products.slice(index, 1)
+                products: products as Types.ObjectId[]
             }
         );
     }

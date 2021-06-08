@@ -71,9 +71,9 @@ export class RoleSeed {
             'CartRead',
             'CartDelete'
         ];
-        const userPermissions = permissions.filter((val) =>
-            filterPermission.includes(val.name)
-        );
+        const userPermissions = permissions
+            .filter((val) => filterPermission.includes(val.name))
+            .map((val) => val._id);
         try {
             await this.roleService.createMany([
                 {

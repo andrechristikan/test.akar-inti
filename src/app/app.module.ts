@@ -19,6 +19,7 @@ import { MiddlewareModule } from 'src/middleware/middleware.module';
 import { EncryptionModule } from 'src/encryption/encryption.module';
 import { SeedsModule } from 'src/database/seeds/seeds.module';
 import { ProductModule } from 'src/product/product.module';
+import { CartModule } from 'src/cart/cart.module';
 
 @Module({
     controllers: [AppController],
@@ -57,7 +58,8 @@ import { ProductModule } from 'src/product/product.module';
         EncryptionModule,
         AuthModule,
         UserModule,
-        ProductModule
+        ProductModule,
+        CartModule
     ]
 })
 export class AppModule {}

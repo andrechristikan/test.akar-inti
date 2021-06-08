@@ -17,7 +17,7 @@ export class CartEntity {
         default: [],
         ref: ProductEntity.name
     })
-    Products: Types.ObjectId[];
+    products: Record<string, any>[];
 }
 
 export const CartDatabaseName = 'carts';
