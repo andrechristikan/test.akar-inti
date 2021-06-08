@@ -16,7 +16,7 @@ import { Permissions } from 'src/permission/permission.decorator';
 import { Logger as LoggerService } from 'winston';
 import { Logger } from 'src/logger/logger.decorator';
 import { CartService } from './cart.service';
-import { CartDocument } from './cart.interface';
+import { CartDocument, CartDocumentFull } from './cart.interface';
 import { Types } from 'mongoose';
 import { ProductService } from 'src/product/product.service';
 
@@ -35,7 +35,7 @@ export class CartController {
     @ResponseStatusCode()
     @Get('/')
     async findOne(@User('_id') userId: string): Promise<IResponse> {
-        const cart: CartDocument = await this.cartService.findOne(
+        const cart: CartDocumentFull = await this.cartService.findOne<CartDocumentFull>(
             {
                 user: Types.ObjectId(userId)
             },
@@ -68,25 +68,26 @@ export class CartController {
         @User('_id') userId: string,
         @Body() data: Record<string, any>
     ): Promise<IResponse> {
-        let cart: CartDocument = await this.cartService.findOne({
+        let cart: CartDocument = await this.cartService.findOne<CartDocument>({
             user: Types.ObjectId(userId)
         });
 
         if (!cart) {
             await this.cartService.create(userId);
 
-            cart = await this.cartService.findOne({
+            cart = await this.cartService.findOne<CartDocument>({
                 user: Types.ObjectId(userId)
             });
         }
 
         const product = await this.productService.findOneById(data.product);
-        const index = cart.products.findIndex(
+        let index = cart.products.findIndex(
             (val) => `${val.product}` === data.product
         );
 
         if (index < 0) {
             cart.products.push(data);
+            index = cart.products.length - 1;
         } else {
             cart.products[index].quantity =
                 cart.products[index].quantity + data.quantity;
@@ -118,9 +119,11 @@ export class CartController {
         @User('_id') userId: string,
         @Body() data: Record<string, any>
     ): Promise<IResponse> {
-        const cart: CartDocument = await this.cartService.findOne({
-            user: Types.ObjectId(userId)
-        });
+        const cart: CartDocument = await this.cartService.findOne<CartDocument>(
+            {
+                user: Types.ObjectId(userId)
+            }
+        );
         if (!cart) {
             throw new BadRequestException(
                 this.responseService.error(
@@ -151,9 +154,8 @@ export class CartController {
 
         cart.products[index].quantity =
             cart.products[index].quantity - data.quantity;
-
-        if (cart.products[index].quantity) {
-            cart.products.slice(index, 1);
+        if (cart.products[index].quantity === 0) {
+            cart.products.splice(index, 1);
         }
 
         await this.cartService.updateProducts(cart._id, cart.products);

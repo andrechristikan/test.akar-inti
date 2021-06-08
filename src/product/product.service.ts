@@ -32,7 +32,8 @@ export class ProductService {
             name: data.name,
             description: data.description,
             quantity: data.quantity || 0,
-            isActive: data.isActive || true
+            isActive: data.isActive || true,
+            price: data.price || 0
         });
 
         return create.save();
@@ -43,7 +44,8 @@ export class ProductService {
             name: val.name,
             description: val.description,
             quantity: val.quantity || 0,
-            isActive: val.isActive || true
+            isActive: val.isActive || true,
+            price: val.price || 0
         }));
 
         return new Promise((resolve, reject) => {
@@ -89,7 +91,8 @@ export class ProductService {
                 description: data.description,
                 name: data.name,
                 quantity: data.quantity,
-                isActive: data.isActive
+                isActive: data.isActive,
+                price: data.price
             }
         );
     }

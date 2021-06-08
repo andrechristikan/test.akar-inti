@@ -130,7 +130,8 @@ export class UserService {
             },
             {
                 firstName: data.firstName.toLowerCase(),
-                lastName: data.lastName.toLowerCase()
+                lastName: data.lastName.toLowerCase(),
+                savedPlaces: data.savedPlaces
             }
         );
     }

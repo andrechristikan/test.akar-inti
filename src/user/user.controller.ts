@@ -34,6 +34,10 @@ import { PermissionList } from 'src/permission/permission.constant';
 import { Permissions } from 'src/permission/permission.decorator';
 import { CartDocument } from 'src/cart/cart.interface';
 import { CartService } from 'src/cart/cart.service';
+import { Role } from 'src/role/role.decorator';
+import { Role as RoleEnum } from 'src/role/role.constant';
+import { RoleService } from 'src/role/role.service';
+import { RoleDocumentFull } from 'src/role/role.interface';
 
 @Controller('/user')
 export class UserController {
@@ -42,6 +46,7 @@ export class UserController {
         @Message() private readonly messageService: MessageService,
         @Pagination() private readonly paginationService: PaginationService,
         @Logger() private readonly logger: LoggerService,
+        @Role() private readonly roleService: RoleService,
         private readonly userService: UserService,
         private readonly cartService: CartService
     ) {}
@@ -160,9 +165,24 @@ export class UserController {
             );
         }
 
+        const role = await this.roleService.findOneById<RoleDocumentFull>(
+            data.role,
+            true
+        );
+        if (!role) {
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('user.create.roleNotFound')
+                )
+            );
+        }
+
         try {
             const user: UserDocument = await this.userService.create(data);
-            await this.cartService.create(user._id);
+
+            if (role.name !== RoleEnum.Admin) {
+                await this.cartService.create(user._id);
+            }
 
             return this.responseService.success(
                 this.messageService.get('user.create.success'),
@@ -222,6 +242,61 @@ export class UserController {
     @Put('/update/:userId')
     async update(
         @Param('userId') userId: string,
+        @Body(RequestValidationPipe(UserUpdateValidation))
+        data: UserUpdateValidation
+    ): Promise<IResponse> {
+        const user: UserDocumentFull = await this.userService.findOneById<UserDocumentFull>(
+            userId,
+            true
+        );
+        if (!user) {
+            this.logger.error('user Error', {
+                class: 'UserController',
+                function: 'delete'
+            });
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('http.clientError.notFound')
+                )
+            );
+        }
+
+        try {
+            await this.userService.updateOneById(userId, data);
+            const user: UserDocumentFull = await this.userService.findOneById<UserDocumentFull>(
+                userId,
+                true
+            );
+
+            return this.responseService.success(
+                this.messageService.get('user.update.success'),
+                user
+            );
+        } catch (err: any) {
+            this.logger.error('update try catch', {
+                class: 'UserController',
+                function: 'update',
+                error: {
+                    ...err
+                }
+            });
+
+            throw new InternalServerErrorException(
+                this.responseService.error(
+                    this.messageService.get(
+                        'http.serverError.internalServerError'
+                    )
+                )
+            );
+        }
+    }
+
+    @AuthJwtGuard()
+    @Permissions(PermissionList.ProfileRead, PermissionList.ProfileUpdate)
+    @ResponseStatusCode()
+    @Put('/profile-update')
+    async profileUpdate(
+        @User('_id') userId: string,
         @Body(RequestValidationPipe(UserUpdateValidation))
         data: UserUpdateValidation
     ): Promise<IResponse> {

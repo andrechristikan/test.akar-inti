@@ -3,9 +3,12 @@ import {
     IsNotEmpty,
     MaxLength,
     IsArray,
-    IsOptional
+    ArrayMaxSize,
+    IsOptional,
+    ValidateNested
 } from 'class-validator';
 import { Default } from 'src/utils/class-validator.decorator';
+import { UserSavedPlaces } from '../user.interface';
 
 export class UserUpdateValidation {
     @IsString()
@@ -18,9 +21,5 @@ export class UserUpdateValidation {
     @MaxLength(30)
     readonly lastName: string;
 
-    @IsArray()
-    @Default([])
-    @IsOptional()
-    @MaxLength(3)
-    readonly savedPlaces: string;
+    readonly savedPlaces: UserSavedPlaces[];
 }

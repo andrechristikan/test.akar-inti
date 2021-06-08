@@ -20,6 +20,7 @@ import { EncryptionModule } from 'src/encryption/encryption.module';
 import { SeedsModule } from 'src/database/seeds/seeds.module';
 import { ProductModule } from 'src/product/product.module';
 import { CartModule } from 'src/cart/cart.module';
+import { OrderModule } from 'src/order/order.module';
 
 @Module({
     controllers: [AppController],
@@ -59,7 +60,8 @@ import { CartModule } from 'src/cart/cart.module';
         AuthModule,
         UserModule,
         ProductModule,
-        CartModule
+        CartModule,
+        OrderModule
     ]
 })
 export class AppModule {}

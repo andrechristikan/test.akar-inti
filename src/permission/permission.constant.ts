@@ -32,7 +32,14 @@ export enum PermissionList {
     CartCreate = 'CartCreate',
     CartUpdate = 'CartUpdate',
     CartRead = 'CartRead',
-    CartDelete = 'CartDelete'
+    CartDelete = 'CartDelete',
+
+    // Cart
+    OrderCreate = 'OrderCreate',
+    OrderUpdate = 'OrderUpdate',
+    OrderRead = 'OrderRead',
+    OrderList = 'OrderList',
+    OrderDelete = 'OrderDelete'
 }
 
 export const PERMISSION_KEY = 'permissions';

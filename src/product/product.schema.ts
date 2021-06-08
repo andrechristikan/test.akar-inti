@@ -22,6 +22,12 @@ export class ProductEntity {
 
     @Prop({
         required: true,
+        default: 0
+    })
+    price: number;
+
+    @Prop({
+        required: true,
         default: true
     })
     isActive: boolean;

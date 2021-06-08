@@ -68,7 +68,23 @@ export class UserSeed {
                 email: 'andreck@mail.com',
                 password: '123456',
                 mobileNumber: '0811111122',
-                role: userRole[0]._id
+                role: userRole[0]._id,
+                savedPlaces: [
+                    {
+                        address: 'jalan rumah utama',
+                        name: 'rumah',
+                        default: true,
+                        receiver: 'andreck',
+                        receiverPhone: '081219968822'
+                    },
+                    {
+                        address: 'jalan kantor cadangan',
+                        name: 'kantor',
+                        default: false,
+                        receiver: 'andreck',
+                        receiverPhone: '081219968822'
+                    }
+                ]
             });
             await this.cartService.create(user._id);
 

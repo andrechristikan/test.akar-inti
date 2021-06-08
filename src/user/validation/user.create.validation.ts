@@ -35,7 +35,7 @@ export class UserCreateValidation {
     readonly mobileNumber: string;
 
     @IsMongoId()
-    readonly roleId: Types.ObjectId;
+    readonly role: Types.ObjectId;
 
     @IsArray()
     readonly savedPlaces: UserSavedPlaces[];

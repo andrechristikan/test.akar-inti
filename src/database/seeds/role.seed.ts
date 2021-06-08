@@ -21,7 +21,7 @@ export class RoleSeed {
         autoExit: true
     })
     async create(): Promise<void> {
-        const permissions = await this.permissionService.findAll(0, 20, {
+        const permissions = await this.permissionService.findAll(0, 100, {
             name: {
                 $in: [
                     'UserCreate',
@@ -46,7 +46,12 @@ export class RoleSeed {
                     'CartCreate',
                     'CartUpdate',
                     'CartRead',
-                    'CartDelete'
+                    'CartDelete',
+                    'OrderCreate',
+                    'OrderUpdate',
+                    'OrderRead',
+                    'OrderDelete',
+                    'OrderList'
                 ]
             }
         });
@@ -65,11 +70,15 @@ export class RoleSeed {
         );
 
         const filterPermission = [
+            'ProfileUpdate',
+            'ProfileRead',
             'ProductList',
             'CartCreate',
             'CartUpdate',
             'CartRead',
-            'CartDelete'
+            'CartDelete',
+            'OrderCreate',
+            'OrderList'
         ];
         const userPermissions = permissions
             .filter((val) => filterPermission.includes(val.name))

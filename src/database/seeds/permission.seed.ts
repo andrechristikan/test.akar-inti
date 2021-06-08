@@ -88,6 +88,22 @@ export class PermissionSeed {
                 },
                 {
                     name: 'CartDelete'
+                },
+
+                {
+                    name: 'OrderCreate'
+                },
+                {
+                    name: 'OrderUpdate'
+                },
+                {
+                    name: 'OrderRead'
+                },
+                {
+                    name: 'OrderList'
+                },
+                {
+                    name: 'OrderDelete'
                 }
             ]);
 
@@ -135,7 +151,12 @@ export class PermissionSeed {
                         'CartCreate',
                         'CartUpdate',
                         'CartRead',
-                        'CartDelete'
+                        'CartDelete',
+                        'OrderCreate',
+                        'OrderUpdate',
+                        'OrderRead',
+                        'OrderList',
+                        'OrderDelete'
                     ]
                 }
             });

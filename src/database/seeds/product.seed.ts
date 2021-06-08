@@ -25,25 +25,29 @@ export class ProductSeed {
                 {
                     name: 'apple',
                     description: 'fresh fruit 1',
-                    quantity: 10,
+                    quantity: 30,
+                    price: 2500,
                     isActive: true
                 },
                 {
                     name: 'banana',
                     description: 'fresh fruit 2',
-                    quantity: 10,
+                    quantity: 50,
+                    price: 1500,
                     isActive: true
                 },
                 {
                     name: 'orange',
                     description: 'fresh fruit 3',
                     quantity: 10,
+                    price: 2000,
                     isActive: true
                 },
                 {
                     name: 'pineapple',
                     description: 'future fresh fruit',
                     quantity: 20,
+                    price: 3000,
                     isActive: false
                 }
             ]);

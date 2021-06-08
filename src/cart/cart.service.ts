@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { CartEntity } from './cart.schema';
 import { CartDocument } from './cart.interface';
 import { ProductEntity } from 'src/product/product.schema';
+import { UserEntity } from 'src/user/user.schema';
 
 @Injectable()
 export class CartService {
@@ -24,30 +25,46 @@ export class CartService {
         return this.cartModel.countDocuments(find);
     }
 
-    async findOneById(cartId: string): Promise<CartDocument> {
-        return this.cartModel.findById(cartId).lean();
-    }
-
-    async findOne(
-        find?: Record<string, any>,
-        populate?: boolean
-    ): Promise<CartDocument> {
-        const cart = this.cartModel.findOne(find);
+    async findOneById<T>(cartId: string, populate?: boolean): Promise<T> {
+        const cart = this.cartModel.findById(cartId);
 
         if (populate) {
             cart.populate({
-                path: 'products',
+                path: 'products.product',
                 model: ProductEntity.name,
                 match: { isActive: true }
+            }).populate({
+                path: 'user',
+                model: UserEntity.name
             });
         }
 
         return cart.lean();
     }
 
-    async create(userId: string): Promise<CartDocument> {
+    async findOne<T>(
+        find?: Record<string, any>,
+        populate?: boolean
+    ): Promise<T> {
+        const cart = this.cartModel.findOne(find);
+
+        if (populate) {
+            cart.populate({
+                path: 'products.product',
+                model: ProductEntity.name,
+                match: { isActive: true }
+            }).populate({
+                path: 'user',
+                model: UserEntity.name
+            });
+        }
+
+        return cart.lean();
+    }
+
+    async create(user: string): Promise<CartDocument> {
         const create: CartDocument = new this.cartModel({
-            user: Types.ObjectId(userId),
+            user: Types.ObjectId(user),
             products: []
         });
 
