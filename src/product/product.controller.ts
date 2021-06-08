@@ -98,6 +98,7 @@ export class ProductController {
     }
 
     @AuthJwtGuard()
+    @Permissions(PermissionList.ProductList)
     @ResponseStatusCode()
     @Get('/list')
     async list(

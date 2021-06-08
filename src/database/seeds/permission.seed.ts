@@ -18,17 +18,6 @@ export class PermissionSeed {
         autoExit: true
     })
     async create(): Promise<void> {
-        const check = await this.permissionService.findAll(0, 1);
-
-        if (check && check.length !== 0) {
-            this.logger.error('Only for initial purpose', {
-                class: 'PermissionSeed',
-                function: 'create'
-            });
-
-            return;
-        }
-
         try {
             await this.permissionService.createMany([
                 {
@@ -84,6 +73,21 @@ export class PermissionSeed {
                 },
                 {
                     name: 'ProductDelete'
+                },
+                {
+                    name: 'ProductList'
+                },
+                {
+                    name: 'CartCreate'
+                },
+                {
+                    name: 'CartUpdate'
+                },
+                {
+                    name: 'CartRead'
+                },
+                {
+                    name: 'CartDelete'
                 }
             ]);
 
@@ -126,7 +130,12 @@ export class PermissionSeed {
                         'ProductCreate',
                         'ProductUpdate',
                         'ProductRead',
-                        'ProductDelete'
+                        'ProductDelete',
+                        'ProductList',
+                        'CartCreate',
+                        'CartUpdate',
+                        'CartRead',
+                        'CartDelete'
                     ]
                 }
             });

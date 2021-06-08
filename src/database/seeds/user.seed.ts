@@ -7,14 +7,17 @@ import { RoleService } from 'src/role/role.service';
 import { UserService } from 'src/user/user.service';
 import { Hash } from 'src/hash/hash.decorator';
 import { HashService } from 'src/hash/hash.service';
+import { CartService } from 'src/cart/cart.service';
+import { UserDocument } from 'src/user/user.interface';
 
 @Injectable()
 export class UserSeed {
     constructor(
         @Logger() private readonly logger: LoggerService,
+        @Hash() readonly hashService: HashService,
         private readonly userService: UserService,
         private readonly roleService: RoleService,
-        @Hash() readonly hashService: HashService
+        private readonly cartService: CartService
     ) {}
 
     @Command({
@@ -23,11 +26,11 @@ export class UserSeed {
         autoExit: true
     })
     async create(): Promise<void> {
-        const role = await this.roleService.findAll(0, 1, {
+        const adminRole = await this.roleService.findAll(0, 1, {
             name: 'admin'
         });
 
-        if (!role || role.length === 0) {
+        if (!adminRole || adminRole.length === 0) {
             this.logger.error('Go Insert User Before Insert Roles', {
                 class: 'UserSeed',
                 function: 'create'
@@ -36,11 +39,12 @@ export class UserSeed {
             return;
         }
 
-        const check = await this.userService.findAll(0, 1, {
-            email: 'admin@mail.com'
+        const userRole = await this.roleService.findAll(0, 1, {
+            name: 'user'
         });
-        if (check && check.length !== 0) {
-            this.logger.error('Only for initial purpose', {
+
+        if (!userRole || userRole.length === 0) {
+            this.logger.error('Go Insert User Before Insert Roles', {
                 class: 'UserSeed',
                 function: 'create'
             });
@@ -55,8 +59,18 @@ export class UserSeed {
                 email: 'admin@mail.com',
                 password: '123456',
                 mobileNumber: '08111111111',
-                role: role[0]._id
+                role: adminRole[0]._id
             });
+
+            const user = await this.userService.create({
+                firstName: 'andre',
+                lastName: 'ck',
+                email: 'andreck@mail.com',
+                password: '123456',
+                mobileNumber: '0811111122',
+                role: userRole[0]._id
+            });
+            await this.cartService.create(user._id);
 
             this.logger.info('Insert User Succeed', {
                 class: 'UserSeed',
@@ -77,8 +91,18 @@ export class UserSeed {
     })
     async remove(): Promise<void> {
         try {
+            const user: UserDocument = await this.userService.findOne({
+                email: 'andreck@mail.com'
+            });
+
+            await this.cartService.deleteMany({
+                user: user._id
+            });
             await this.userService.deleteMany({
                 email: 'admin@mail.com'
+            });
+            await this.userService.deleteMany({
+                email: 'andreck@mail.com'
             });
 
             this.logger.info('Remove User Succeed', {

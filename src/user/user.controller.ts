@@ -32,6 +32,8 @@ import { Logger } from 'src/logger/logger.decorator';
 import { UserDocument, UserDocumentFull } from './user.interface';
 import { PermissionList } from 'src/permission/permission.constant';
 import { Permissions } from 'src/permission/permission.decorator';
+import { CartDocument } from 'src/cart/cart.interface';
+import { CartService } from 'src/cart/cart.service';
 
 @Controller('/user')
 export class UserController {
@@ -40,7 +42,8 @@ export class UserController {
         @Message() private readonly messageService: MessageService,
         @Pagination() private readonly paginationService: PaginationService,
         @Logger() private readonly logger: LoggerService,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly cartService: CartService
     ) {}
 
     @AuthJwtGuard()
@@ -159,6 +162,8 @@ export class UserController {
 
         try {
             const user: UserDocument = await this.userService.create(data);
+            await this.cartService.create(user._id);
+
             return this.responseService.success(
                 this.messageService.get('user.create.success'),
                 user
@@ -202,6 +207,10 @@ export class UserController {
         }
 
         await this.userService.deleteOneById(userId);
+        await this.cartService.deleteMany({
+            user: user._id
+        });
+
         return this.responseService.success(
             this.messageService.get('user.delete.success')
         );

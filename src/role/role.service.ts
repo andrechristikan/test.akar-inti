@@ -20,10 +20,7 @@ export class RoleService {
         return this.roleModel.find(find).skip(offset).limit(limit).limit(1);
     }
 
-    async findOneById(
-        roleId: string,
-        populate?: boolean
-    ): Promise<RoleDocument> {
+    async findOneById<T>(roleId: string, populate?: boolean): Promise<T> {
         const role = this.roleModel.findById(roleId);
 
         if (populate) {
@@ -37,10 +34,10 @@ export class RoleService {
         return role.lean();
     }
 
-    async findOne(
+    async findOne<T>(
         find?: Record<string, any>,
         populate?: boolean
-    ): Promise<RoleDocument> {
+    ): Promise<T> {
         const role = this.roleModel.findOne(find);
 
         if (populate) {

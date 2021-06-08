@@ -9,6 +9,7 @@ import { UserSeed } from './user.seed';
 import { UserModule } from 'src/user/user.module';
 import { ProductSeed } from './product.seed';
 import { ProductModule } from 'src/product/product.module';
+import { CartModule } from 'src/cart/cart.module';
 
 @Module({
     imports: [
@@ -16,7 +17,8 @@ import { ProductModule } from 'src/product/product.module';
         PermissionModule,
         RoleModule,
         UserModule,
-        ProductModule
+        ProductModule,
+        CartModule
     ],
     providers: [PermissionSeed, RoleSeed, UserSeed, ProductSeed],
     exports: []
