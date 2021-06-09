@@ -28,6 +28,10 @@ export class PaymentService {
         return payment.lean();
     }
 
+    async findOneById(paymentId: string): Promise<PaymentDocument> {
+        return this.paymentModel.findById(paymentId).lean();
+    }
+
     async create(data: Record<string, any>): Promise<PaymentDocument> {
         const create: PaymentDocument = new this.paymentModel({
             order: data.order,
@@ -38,5 +42,24 @@ export class PaymentService {
         });
 
         return create.save();
+    }
+
+    async deleteOneById(paymentId: string): Promise<PaymentDocument> {
+        return this.paymentModel.deleteOne({
+            _id: paymentId
+        });
+    }
+
+    async deleteMany(find?: Record<string, any>): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.paymentModel
+                .deleteMany(find)
+                .then(() => {
+                    resolve(true);
+                })
+                .catch((err: any) => {
+                    reject(err);
+                });
+        });
     }
 }

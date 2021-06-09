@@ -8,7 +8,6 @@ export class RoleEntity {
         required: true,
         index: true,
         unique: true,
-        lowercase: true,
         trim: true
     })
     name: string;

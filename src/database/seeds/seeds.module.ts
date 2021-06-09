@@ -10,6 +10,11 @@ import { UserModule } from 'src/user/user.module';
 import { ProductSeed } from './product.seed';
 import { ProductModule } from 'src/product/product.module';
 import { CartModule } from 'src/cart/cart.module';
+import { CartSeed } from './cart.seed';
+import { OrderModule } from 'src/order/order.module';
+import { OrderSeed } from './order.seed';
+import { PaymentModule } from 'src/payment/payment.module';
+import { PaymentSeed } from './payment.seed';
 
 @Module({
     imports: [
@@ -18,9 +23,19 @@ import { CartModule } from 'src/cart/cart.module';
         RoleModule,
         UserModule,
         ProductModule,
-        CartModule
+        CartModule,
+        OrderModule,
+        PaymentModule
     ],
-    providers: [PermissionSeed, RoleSeed, UserSeed, ProductSeed],
+    providers: [
+        PermissionSeed,
+        RoleSeed,
+        UserSeed,
+        ProductSeed,
+        CartSeed,
+        OrderSeed,
+        PaymentSeed
+    ],
     exports: []
 })
 export class SeedsModule {}

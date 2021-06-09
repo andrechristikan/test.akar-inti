@@ -1,7 +1,5 @@
 import { OrderEntity } from './order.schema';
 import { Document } from 'mongoose';
-import { ProductEntity } from 'src/product/product.schema';
-import { UserEntity } from 'src/user/user.schema';
 import { ProductDocument } from 'src/product/product.interface';
 import { UserDocument } from 'src/user/user.interface';
 

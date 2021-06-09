@@ -5,7 +5,7 @@ import { Logger } from 'src/logger/logger.decorator';
 
 import { PermissionService } from 'src/permission/permission.service';
 import { RoleService } from 'src/role/role.service';
-import { Types } from 'mongoose';
+import { RoleList } from 'src/role/role.constant';
 
 @Injectable()
 export class RoleSeed {
@@ -21,88 +21,53 @@ export class RoleSeed {
         autoExit: true
     })
     async create(): Promise<void> {
-        const permissions = await this.permissionService.findAll(0, 100, {
-            name: {
-                $in: [
-                    'UserCreate',
-                    'UserUpdate',
-                    'UserRead',
-                    'UserDelete',
-                    'ProfileUpdate',
-                    'ProfileRead',
-                    'RoleCreate',
-                    'RoleUpdate',
-                    'RoleRead',
-                    'RoleDelete',
-                    'PermissionCreate',
-                    'PermissionUpdate',
-                    'PermissionRead',
-                    'PermissionDelete',
-                    'ProductCreate',
-                    'ProductUpdate',
-                    'ProductRead',
-                    'ProductDelete',
-                    'ProductList',
-                    'CartCreate',
-                    'CartUpdate',
-                    'CartRead',
-                    'CartDelete',
-                    'OrderCreate',
-                    'OrderUpdate',
-                    'OrderRead',
-                    'OrderDelete',
-                    'OrderList',
-                    'PaymentCreate',
-                    'PaymentUpdate',
-                    'PaymentRead',
-                    'PaymentList'
-                ]
-            }
-        });
+        const permissions = await this.permissionService.findAll(0, 100);
 
-        if (!permissions || permissions.length === 0) {
-            this.logger.error('Go Insert Role Before Insert Roles', {
-                class: 'RoleSeed',
-                function: 'create'
-            });
+        const adminFilterPermission = [
+            'UserCreate',
+            'UserUpdate',
+            'UserRead',
+            'UserDelete',
+            'ProductCreate',
+            'ProductUpdate',
+            'ProductRead',
+            'ProductDelete',
+            'OrderCreate',
+            'OrderUpdate',
+            'OrderRead',
+            'PaymentCreate',
+            'PaymentRead',
+            'PaymentDelete'
+        ];
+        const adminPermissions = permissions
+            .filter((val) => adminFilterPermission.includes(val.name))
+            .map((val) => val._id);
 
-            return;
-        }
-
-        const adminPermissions: Types.ObjectId[] = permissions.map(
-            (val) => val._id
-        );
-
-        const filterPermission = [
+        const customerFilterPermission = [
             'ProfileUpdate',
             'ProfileRead',
             'ProductList',
             'CartCreate',
             'CartUpdate',
             'CartRead',
-            'CartDelete',
             'OrderCreate',
             'OrderList',
             'PaymentCreate',
-            'PaymentUpdate',
-            'PaymentRead',
             'PaymentList'
         ];
-        const userPermissions = permissions
-            .filter((val) => filterPermission.includes(val.name))
+        const customerPermissions = permissions
+            .filter((val) => customerFilterPermission.includes(val.name))
             .map((val) => val._id);
+
         try {
             await this.roleService.createMany([
                 {
-                    name: 'admin',
+                    name: RoleList.Admin,
                     permissions: adminPermissions
-                }
-            ]);
-
-            await this.roleService.createMany([
+                },
                 {
-                    name: 'user',
-                    permissions: userPermissions
+                    name: RoleList.Customer,
+                    permissions: customerPermissions
                 }
             ]);
 
@@ -125,9 +90,7 @@ export class RoleSeed {
     })
     async remove(): Promise<void> {
         try {
-            await this.roleService.deleteMany({
-                name: { $in: ['admin', 'user'] }
-            });
+            await this.roleService.deleteMany();
 
             this.logger.info('Remove Role Succeed', {
                 class: 'RoleSeed',

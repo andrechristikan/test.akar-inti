@@ -86,7 +86,10 @@ export class CartController {
         );
 
         if (index < 0) {
-            cart.products.push(data);
+            cart.products.push({
+                product: Types.ObjectId(data.product),
+                quantity: data.quantity
+            });
             index = cart.products.length - 1;
         } else {
             cart.products[index].quantity =

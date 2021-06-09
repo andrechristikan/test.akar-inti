@@ -2,16 +2,12 @@ import {
     Body,
     Controller,
     Get,
-    HttpCode,
-    HttpStatus,
     Post,
     DefaultValuePipe,
     ParseIntPipe,
     Query,
-    Delete,
     Param,
     BadRequestException,
-    ParseBoolPipe,
     InternalServerErrorException,
     Patch
 } from '@nestjs/common';
@@ -36,6 +32,7 @@ import { CartDocument } from 'src/cart/cart.interface';
 import { CartService } from 'src/cart/cart.service';
 import { PaymentService } from 'src/payment/payment.service';
 import { PaymentDocument } from 'src/payment/payment.interface';
+import { ProductService } from 'src/product/product.service';
 
 @Controller('/order')
 export class OrderController {
@@ -46,7 +43,8 @@ export class OrderController {
         @Logger() private readonly logger: LoggerService,
         private readonly orderService: OrderService,
         private readonly paymentService: PaymentService,
-        private readonly cartService: CartService
+        private readonly cartService: CartService,
+        private readonly productService: ProductService
     ) {}
 
     @AuthJwtGuard()
@@ -57,7 +55,7 @@ export class OrderController {
         @Query('page', new DefaultValuePipe(PAGE), ParseIntPipe) page: number,
         @Query('perPage', new DefaultValuePipe(PER_PAGE), ParseIntPipe)
         perPage: number,
-        @Query('status', new DefaultValuePipe(OrderStatus[OrderStatus.Payment]))
+        @Query('status', new DefaultValuePipe(OrderStatus.Payment))
         status: string
     ): Promise<IResponse> {
         const skip = await this.paginationService.skip(page, perPage);
@@ -96,14 +94,14 @@ export class OrderController {
         @Query('page', new DefaultValuePipe(PAGE), ParseIntPipe) page: number,
         @Query('perPage', new DefaultValuePipe(PER_PAGE), ParseIntPipe)
         perPage: number,
-        @Query('status', new DefaultValuePipe(OrderStatus[OrderStatus.Payment]))
+        @Query('status', new DefaultValuePipe(OrderStatus.Payment))
         status: string,
         @User('_id') userId: string
     ): Promise<IResponse> {
         const skip = await this.paginationService.skip(page, perPage);
         const find = {
             user: Types.ObjectId(userId),
-            status: { $in: status.split(',') }
+            status: { $in: status.split(',').map((val) => OrderStatus[val]) }
         };
         const orders: OrderDocument[] = await this.orderService.findAll(
             skip,
@@ -191,6 +189,36 @@ export class OrderController {
     }
 
     @AuthJwtGuard()
+    @Permissions(PermissionList.OrderRead)
+    @ResponseStatusCode()
+    @Get('/:orderId')
+    async findOneById(@Param('orderId') orderId: string): Promise<IResponse> {
+        const order: OrderDocumentFull = await this.orderService.findOne<OrderDocumentFull>(
+            {
+                _id: Types.ObjectId(orderId)
+            },
+            true
+        );
+        if (!order) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'listDetail'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.listDetail.notFound')
+                )
+            );
+        }
+
+        return this.responseService.success(
+            this.messageService.get('order.listDetail.success'),
+            order
+        );
+    }
+
+    @AuthJwtGuard()
     @Permissions(PermissionList.OrderList, PermissionList.OrderCreate)
     @ResponseStatusCode()
     @Post('/create')
@@ -199,16 +227,90 @@ export class OrderController {
         data: Record<string, any>,
         @User('_id') userId: string
     ): Promise<IResponse> {
+        const cart: CartDocument = await this.cartService.findOne<CartDocument>(
+            {
+                user: Types.ObjectId(userId)
+            }
+        );
+        if (!cart) {
+            this.logger.error('create Error', {
+                class: 'OrderController',
+                function: 'create'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.updatePayment.cartNotFound')
+                )
+            );
+        } else if (cart && cart.products.length === 0) {
+            this.logger.error('create Error', {
+                class: 'OrderController',
+                function: 'create'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.updatePayment.productNull')
+                )
+            );
+        }
+
+        const products = cart.products.map((val) =>
+            Types.ObjectId(val.product)
+        );
+        const productsCheck = await this.productService.findAll(
+            0,
+            products.length + 1,
+            {
+                _id: {
+                    $in: products
+                }
+            }
+        );
+
+        const productsStock = cart.products.map((val) => {
+            const stock = productsCheck.filter(
+                (vls) => `${val.product}` === `${vls._id}`
+            )[0].quantity;
+            const quantity = val.quantity;
+
+            return {
+                ...val,
+                stock,
+                next: quantity <= stock ? true : false
+            };
+        });
+        const productOut = productsStock.filter((val) => val.next === false);
+        const productIn: Record<string, any>[] = productsStock.filter(
+            (val) => val.next === true
+        );
+
+        if (productOut.length > 0) {
+            this.logger.error('create try catch', {
+                class: 'OrderController',
+                function: 'create'
+            });
+            throw new InternalServerErrorException(
+                this.responseService.error(
+                    this.messageService.get('order.create.outOfStock')
+                )
+            );
+        }
+
+        for (const ins of productIn) {
+            await this.productService.updateOneById(
+                Types.ObjectId(ins.product),
+                {
+                    quantity: ins.stock - ins.quantity
+                }
+            );
+        }
+
         try {
             const order: OrderDocument = await this.orderService.create(
                 data.place,
                 Types.ObjectId(userId)
-            );
-
-            const cart: CartDocument = await this.cartService.findOne<CartDocument>(
-                {
-                    user: Types.ObjectId(userId)
-                }
             );
             await this.cartService.updateProducts(Types.ObjectId(cart._id), []);
 
@@ -253,9 +355,22 @@ export class OrderController {
                     this.messageService.get('order.updatePayment.notFound')
                 )
             );
+        } else if (check.status !== OrderStatus.Payment) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updateShipment'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get(
+                        'order.updateShipment.statusNotMatch'
+                    )
+                )
+            );
         }
 
-        const payment = this.paymentService.findOne<PaymentDocument>({
+        const payment = await this.paymentService.findOne<PaymentDocument>({
             order: Types.ObjectId(check._id)
         });
         if (!payment) {
@@ -279,10 +394,8 @@ export class OrderController {
                     _id: Types.ObjectId(check._id)
                 },
                 {
-                    status: OrderStatus[OrderStatus.Paid],
-                    payment: {
-                        date: new Date()
-                    }
+                    status: OrderStatus.Paid,
+                    paymentDate: new Date()
                 }
             );
 
@@ -330,7 +443,7 @@ export class OrderController {
                     this.messageService.get('order.updateShipment.notFound')
                 )
             );
-        } else if (check.status !== OrderStatus[OrderStatus.Paid]) {
+        } else if (check.status !== OrderStatus.Paid) {
             this.logger.error('order Error', {
                 class: 'OrderController',
                 function: 'updateShipment'
@@ -351,7 +464,7 @@ export class OrderController {
                     _id: Types.ObjectId(check._id)
                 },
                 {
-                    status: OrderStatus[OrderStatus.Shipment],
+                    status: OrderStatus.Shipment,
                     shipment: {
                         date: new Date(),
                         number: data.number
@@ -366,6 +479,165 @@ export class OrderController {
             this.logger.error('updateShipment try catch', {
                 class: 'OrderController',
                 function: 'updateShipment',
+                error: err
+            });
+            throw new InternalServerErrorException(
+                this.responseService.error(
+                    this.messageService.get(
+                        'http.serverError.internalServerError'
+                    )
+                )
+            );
+        }
+    }
+
+    @AuthJwtGuard()
+    @Permissions(PermissionList.OrderRead, PermissionList.OrderUpdate)
+    @ResponseStatusCode()
+    @Patch('/update-completed/:orderId')
+    async updateCompleted(
+        @Param('orderId') orderId: string
+    ): Promise<IResponse> {
+        const check: OrderDocument = await this.orderService.findOne<OrderDocument>(
+            {
+                _id: Types.ObjectId(orderId)
+            }
+        );
+        if (!check) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updateShipment'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.updateShipment.notFound')
+                )
+            );
+        } else if (check.status !== OrderStatus.Shipment) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updateShipment'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get(
+                        'order.updateShipment.statusNotMatch'
+                    )
+                )
+            );
+        }
+
+        try {
+            await this.orderService.updateOne(
+                {
+                    _id: Types.ObjectId(check._id)
+                },
+                {
+                    status: OrderStatus.Completed,
+                    completedDate: new Date()
+                }
+            );
+
+            return this.responseService.success(
+                this.messageService.get('order.updateShipment.success')
+            );
+        } catch (err: any) {
+            this.logger.error('updateShipment try catch', {
+                class: 'OrderController',
+                function: 'updateShipment',
+                error: err
+            });
+            throw new InternalServerErrorException(
+                this.responseService.error(
+                    this.messageService.get(
+                        'http.serverError.internalServerError'
+                    )
+                )
+            );
+        }
+    }
+
+    @AuthJwtGuard()
+    @Permissions(PermissionList.OrderRead, PermissionList.OrderUpdate)
+    @ResponseStatusCode()
+    @Patch('/update-cancel/:orderId')
+    async updateCancel(@Param('orderId') orderId: string): Promise<IResponse> {
+        const order: OrderDocument = await this.orderService.findOne<OrderDocument>(
+            {
+                _id: Types.ObjectId(orderId)
+            }
+        );
+        if (!order) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updateCancel'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.updateCancel.notFound')
+                )
+            );
+        } else if (order.status === OrderStatus.Completed) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updateCancel'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.updateCancel.statusNotMatch')
+                )
+            );
+        }
+
+        const products = order.products.map((val) =>
+            Types.ObjectId(val.product)
+        );
+        const productsCheck = await this.productService.findAll(
+            0,
+            products.length + 1,
+            {
+                _id: {
+                    $in: products
+                }
+            }
+        );
+
+        for (const ins of order.products) {
+            const stock = productsCheck.filter(
+                (vls) => `${ins.product}` === `${vls._id}`
+            )[0].quantity;
+            const quantity = ins.quantity + stock;
+
+            await this.productService.updateOneById(
+                Types.ObjectId(ins.product),
+                {
+                    quantity
+                }
+            );
+        }
+
+        try {
+            await this.orderService.updateOne(
+                {
+                    _id: Types.ObjectId(order._id)
+                },
+                {
+                    status: OrderStatus.Cancel,
+                    cancelDate: new Date()
+                }
+            );
+
+            return this.responseService.success(
+                this.messageService.get('order.updateCancel.success')
+            );
+        } catch (err: any) {
+            this.logger.error('updateCancel try catch', {
+                class: 'OrderController',
+                function: 'updateCancel',
                 error: err
             });
             throw new InternalServerErrorException(

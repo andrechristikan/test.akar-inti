@@ -10,8 +10,7 @@ import {
     BadRequestException,
     InternalServerErrorException,
     DefaultValuePipe,
-    ParseIntPipe,
-    ParseBoolPipe
+    ParseIntPipe
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { Response, ResponseStatusCode } from 'src/response/response.decorator';
@@ -32,10 +31,9 @@ import { Logger } from 'src/logger/logger.decorator';
 import { UserDocument, UserDocumentFull } from './user.interface';
 import { PermissionList } from 'src/permission/permission.constant';
 import { Permissions } from 'src/permission/permission.decorator';
-import { CartDocument } from 'src/cart/cart.interface';
 import { CartService } from 'src/cart/cart.service';
 import { Role } from 'src/role/role.decorator';
-import { Role as RoleEnum } from 'src/role/role.constant';
+import { RoleList } from 'src/role/role.constant';
 import { RoleService } from 'src/role/role.service';
 import { RoleDocumentFull } from 'src/role/role.interface';
 import { Types } from 'mongoose';
@@ -91,6 +89,7 @@ export class UserController {
             userId,
             true
         );
+
         if (!user) {
             this.logger.error('user Error', {
                 class: 'UserController',
@@ -181,7 +180,7 @@ export class UserController {
         try {
             const user: UserDocument = await this.userService.create(data);
 
-            if (role.name !== RoleEnum.Admin) {
+            if (role.name !== RoleList.Admin) {
                 await this.cartService.create(Types.ObjectId(user._id));
             }
 

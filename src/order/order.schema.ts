@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
-import { ListOfBank } from 'src/payment/payment.constant';
 import { ProductEntity } from 'src/product/product.schema';
 import { UserEntity } from 'src/user/user.schema';
 import { OrderStatus } from './order.constant';
@@ -38,11 +37,9 @@ export class OrderEntity {
 
     @Prop({
         required: false,
-        type: Object
+        type: Date
     })
-    payment?: {
-        date: Date;
-    };
+    paymentDate?: Date;
 
     @Prop({
         required: false,
@@ -58,6 +55,12 @@ export class OrderEntity {
         type: Date
     })
     completedDate?: Date;
+
+    @Prop({
+        required: false,
+        type: Date
+    })
+    cancelDate?: Date;
 }
 
 export const OrderDatabaseName = 'orders';

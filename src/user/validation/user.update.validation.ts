@@ -1,13 +1,4 @@
-import {
-    IsString,
-    IsNotEmpty,
-    MaxLength,
-    IsArray,
-    ArrayMaxSize,
-    IsOptional,
-    ValidateNested
-} from 'class-validator';
-import { Default } from 'src/utils/class-validator.decorator';
+import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
 import { UserSavedPlaces } from '../user.interface';
 
 export class UserUpdateValidation {

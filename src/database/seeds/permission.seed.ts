@@ -39,30 +39,6 @@ export class PermissionSeed {
                     name: 'ProfileRead'
                 },
                 {
-                    name: 'RoleCreate'
-                },
-                {
-                    name: 'RoleUpdate'
-                },
-                {
-                    name: 'RoleRead'
-                },
-                {
-                    name: 'RoleDelete'
-                },
-                {
-                    name: 'PermissionCreate'
-                },
-                {
-                    name: 'PermissionUpdate'
-                },
-                {
-                    name: 'PermissionRead'
-                },
-                {
-                    name: 'PermissionDelete'
-                },
-                {
                     name: 'ProductCreate'
                 },
                 {
@@ -87,10 +63,6 @@ export class PermissionSeed {
                     name: 'CartRead'
                 },
                 {
-                    name: 'CartDelete'
-                },
-
-                {
                     name: 'OrderCreate'
                 },
                 {
@@ -103,16 +75,13 @@ export class PermissionSeed {
                     name: 'OrderList'
                 },
                 {
-                    name: 'OrderDelete'
-                },
-                {
                     name: 'PaymentCreate'
                 },
                 {
-                    name: 'PaymentUpdate'
+                    name: 'PaymentRead'
                 },
                 {
-                    name: 'PaymentRead'
+                    name: 'PaymentDelete'
                 },
                 {
                     name: 'PaymentList'
@@ -138,44 +107,7 @@ export class PermissionSeed {
     })
     async remove(): Promise<void> {
         try {
-            await this.permissionService.deleteMany({
-                name: {
-                    $in: [
-                        'UserCreate',
-                        'UserUpdate',
-                        'UserRead',
-                        'UserDelete',
-                        'ProfileUpdate',
-                        'ProfileRead',
-                        'RoleCreate',
-                        'RoleUpdate',
-                        'RoleRead',
-                        'RoleDelete',
-                        'PermissionCreate',
-                        'PermissionUpdate',
-                        'PermissionRead',
-                        'PermissionDelete',
-                        'ProductCreate',
-                        'ProductUpdate',
-                        'ProductRead',
-                        'ProductDelete',
-                        'ProductList',
-                        'CartCreate',
-                        'CartUpdate',
-                        'CartRead',
-                        'CartDelete',
-                        'OrderCreate',
-                        'OrderUpdate',
-                        'OrderRead',
-                        'OrderList',
-                        'OrderDelete',
-                        'PaymentCreate',
-                        'PaymentUpdate',
-                        'PaymentRead',
-                        'PaymentList'
-                    ]
-                }
-            });
+            await this.permissionService.deleteMany();
 
             this.logger.info('Remove Permission Succeed', {
                 class: 'PermissionSeed',

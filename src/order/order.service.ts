@@ -8,7 +8,6 @@ import { UserEntity } from 'src/user/user.schema';
 import { CartService } from 'src/cart/cart.service';
 import { CartDocumentFull } from 'src/cart/cart.interface';
 import { OrderStatus } from './order.constant';
-import { ListOfBank } from 'src/payment/payment.constant';
 
 @Injectable()
 export class OrderService {
@@ -94,7 +93,7 @@ export class OrderService {
             user,
             products: products,
             place,
-            status: OrderStatus[OrderStatus.Payment]
+            status: OrderStatus.Payment
         });
 
         return create.save();

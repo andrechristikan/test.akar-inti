@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { OrderDatabaseName, OrderEntity, OrderSchema } from './order.schema';
 import { CartModule } from 'src/cart/cart.module';
-import { PaymentService } from 'src/payment/payment.service';
 import { PaymentModule } from 'src/payment/payment.module';
+import { ProductModule } from 'src/product/product.module';
 
 @Module({
     controllers: [OrderController],
@@ -20,8 +20,9 @@ import { PaymentModule } from 'src/payment/payment.module';
             }
         ]),
         CartModule,
-        PaymentModule,
-        CartModule
+        forwardRef(() => PaymentModule),
+        CartModule,
+        ProductModule
     ]
 })
 export class OrderModule {}

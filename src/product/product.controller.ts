@@ -2,8 +2,6 @@ import {
     Body,
     Controller,
     Get,
-    HttpCode,
-    HttpStatus,
     Post,
     DefaultValuePipe,
     ParseIntPipe,
@@ -11,7 +9,6 @@ import {
     Delete,
     Param,
     BadRequestException,
-    ParseBoolPipe,
     InternalServerErrorException
 } from '@nestjs/common';
 import { ResponseService } from 'src/response/response.service';
@@ -29,6 +26,7 @@ import { ProductDocument } from './product.interface';
 import { PAGE, PER_PAGE } from 'src/pagination/pagination.constant';
 import { Logger as LoggerService } from 'winston';
 import { Logger } from 'src/logger/logger.decorator';
+import { Types } from 'mongoose';
 
 @Controller('/product')
 export class ProductController {
@@ -71,7 +69,7 @@ export class ProductController {
     }
 
     @AuthJwtGuard()
-    @Permissions(PermissionList.ProductRead, PermissionList.ProductUpdate)
+    @Permissions(PermissionList.ProductRead, PermissionList.ProductDelete)
     @ResponseStatusCode()
     @Delete('/delete/:productId')
     async delete(@Param('productId') productId: string): Promise<IResponse> {
@@ -91,7 +89,7 @@ export class ProductController {
             );
         }
 
-        await this.productService.deleteOneById(productId);
+        await this.productService.deleteOneById(Types.ObjectId(productId));
         return this.responseService.success(
             this.messageService.get('product.delete.success')
         );

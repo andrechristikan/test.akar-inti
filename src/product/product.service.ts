@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ProductEntity } from './product.schema';
 import { ProductDocument } from './product.interface';
 
@@ -73,27 +73,21 @@ export class ProductService {
         });
     }
 
-    async deleteOneById(productId: string): Promise<ProductDocument> {
+    async deleteOneById(productId: Types.ObjectId): Promise<ProductDocument> {
         return this.productModel.deleteOne({
             _id: productId
         });
     }
 
     async updateOneById(
-        productId: string,
+        productId: Types.ObjectId,
         data: Record<string, any>
     ): Promise<ProductDocument> {
         return this.productModel.updateOne(
             {
                 _id: productId
             },
-            {
-                description: data.description,
-                name: data.name,
-                quantity: data.quantity,
-                isActive: data.isActive,
-                price: data.price
-            }
+            data
         );
     }
 }
