@@ -9,6 +9,8 @@ import { Hash } from 'src/hash/hash.decorator';
 import { HashService } from 'src/hash/hash.service';
 import { CartService } from 'src/cart/cart.service';
 import { UserDocument } from 'src/user/user.interface';
+import { ProductService } from 'src/product/product.service';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UserSeed {
@@ -17,7 +19,8 @@ export class UserSeed {
         @Hash() readonly hashService: HashService,
         private readonly userService: UserService,
         private readonly roleService: RoleService,
-        private readonly cartService: CartService
+        private readonly cartService: CartService,
+        private readonly productService: ProductService
     ) {}
 
     @Command({
@@ -86,7 +89,19 @@ export class UserSeed {
                     }
                 ]
             });
-            await this.cartService.create(user._id);
+            const cart = await this.cartService.create(
+                Types.ObjectId(user._id)
+            );
+            const products = await this.productService.findAll(0, 3);
+            const productsMap = products.map((val) => ({
+                product: val._id,
+                quantity: Math.floor(Math.random() * 5) + 1
+            }));
+
+            await this.cartService.updateProducts(
+                Types.ObjectId(cart._id),
+                productsMap
+            );
 
             this.logger.info('Insert User Succeed', {
                 class: 'UserSeed',

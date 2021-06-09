@@ -8,6 +8,7 @@ import { UserEntity } from 'src/user/user.schema';
 import { CartService } from 'src/cart/cart.service';
 import { CartDocumentFull } from 'src/cart/cart.interface';
 import { OrderStatus } from './order.constant';
+import { ListOfBank, PaymentMethod } from 'src/payment/payment.constant';
 
 @Injectable()
 export class OrderService {
@@ -67,19 +68,12 @@ export class OrderService {
     }
 
     async create(
-        cartId: string,
         place: Record<string, any>,
-        userId?: string
+        bank: ListOfBank,
+        user: Types.ObjectId
     ): Promise<OrderDocument> {
-        const find: Record<string, any> = {
-            _id: Types.ObjectId(cartId)
-        };
-
-        if (userId) {
-            find.user = Types.ObjectId(userId);
-        }
         const data: CartDocumentFull = await this.cartService.findOne<CartDocumentFull>(
-            find,
+            { user },
             true
         );
 
@@ -98,9 +92,11 @@ export class OrderService {
         };
 
         const create: OrderDocument = new this.orderModel({
-            user: Types.ObjectId(data.user._id),
+            user,
             products: products,
             place,
+            bank: bank,
+            paymentMethod: PaymentMethod[PaymentMethod.BankTransfer],
             status: OrderStatus[OrderStatus.Payment]
         });
 
@@ -123,6 +119,20 @@ export class OrderService {
     async deleteOneById(orderId: string): Promise<OrderDocument> {
         return this.orderModel.deleteOne({
             _id: orderId
+        });
+    }
+
+    async updateOne(
+        find: Record<string, any>,
+        data: Record<string, any>
+    ): Promise<OrderDocument> {
+        return this.orderModel.updateOne(find, {
+            $set: {
+                status: data.status,
+                paymentDate: data.paymentDate,
+                shipmentDate: data.shipmentDate,
+                completedDate: data.completedDate
+            }
         });
     }
 }

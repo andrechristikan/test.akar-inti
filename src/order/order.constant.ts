@@ -1,6 +1,6 @@
 export enum OrderStatus {
-    Payment,
-    Paid,
-    Shipment,
-    Completed
+    Payment = 'Payment',
+    Paid = 'Paid',
+    Shipment = 'Shipment',
+    Completed = 'Completed'
 }

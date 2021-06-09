@@ -38,6 +38,7 @@ import { Role } from 'src/role/role.decorator';
 import { Role as RoleEnum } from 'src/role/role.constant';
 import { RoleService } from 'src/role/role.service';
 import { RoleDocumentFull } from 'src/role/role.interface';
+import { Types } from 'mongoose';
 
 @Controller('/user')
 export class UserController {
@@ -181,7 +182,7 @@ export class UserController {
             const user: UserDocument = await this.userService.create(data);
 
             if (role.name !== RoleEnum.Admin) {
-                await this.cartService.create(user._id);
+                await this.cartService.create(Types.ObjectId(user._id));
             }
 
             return this.responseService.success(

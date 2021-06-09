@@ -73,7 +73,7 @@ export class CartController {
         });
 
         if (!cart) {
-            await this.cartService.create(userId);
+            await this.cartService.create(Types.ObjectId(userId));
 
             cart = await this.cartService.findOne<CartDocument>({
                 user: Types.ObjectId(userId)
@@ -103,7 +103,10 @@ export class CartController {
             );
         }
 
-        await this.cartService.updateProducts(cart._id, cart.products);
+        await this.cartService.updateProducts(
+            Types.ObjectId(cart._id),
+            cart.products
+        );
 
         return this.responseService.success(
             this.messageService.get('cart.addItem.success'),
@@ -158,7 +161,10 @@ export class CartController {
             cart.products.splice(index, 1);
         }
 
-        await this.cartService.updateProducts(cart._id, cart.products);
+        await this.cartService.updateProducts(
+            Types.ObjectId(cart._id),
+            cart.products
+        );
 
         return this.responseService.success(
             this.messageService.get('cart.removeItem.success'),

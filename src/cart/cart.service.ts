@@ -47,7 +47,6 @@ export class CartService {
         populate?: boolean
     ): Promise<T> {
         const cart = this.cartModel.findOne(find);
-
         if (populate) {
             cart.populate({
                 path: 'products.product',
@@ -62,9 +61,9 @@ export class CartService {
         return cart.lean();
     }
 
-    async create(user: string): Promise<CartDocument> {
+    async create(user: Types.ObjectId): Promise<CartDocument> {
         const create: CartDocument = new this.cartModel({
-            user: Types.ObjectId(user),
+            user,
             products: []
         });
 
@@ -72,15 +71,15 @@ export class CartService {
     }
 
     async updateProducts(
-        cartId: string,
+        cartId: Types.ObjectId,
         products: Record<string, any>[]
     ): Promise<CartDocument> {
         return this.cartModel.updateOne(
             {
-                _id: Types.ObjectId(cartId)
+                _id: cartId
             },
             {
-                products: products as Types.ObjectId[]
+                products
             }
         );
     }

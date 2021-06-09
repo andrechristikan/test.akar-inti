@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"e2e/**/*.ts\"",
     "migrate:rollback": "nestjs-command remove:user && nestjs-command remove:role && nestjs-command remove:permission && nestjs-command remove:product",
-    "migrate": "nestjs-command create:permission && nestjs-command create:role && nestjs-command create:user && nestjs-command create:product",
+    "migrate": "nestjs-command create:permission && nestjs-command create:role && nestjs-command create:product && nestjs-command create:user",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

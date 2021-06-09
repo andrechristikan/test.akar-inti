@@ -38,13 +38,31 @@ export class OrderEntity {
         required: false,
         enum: ListOfBank
     })
-    bank?: string;
+    bank: string;
 
     @Prop({
         required: false,
         enum: PaymentMethod
     })
-    paymentMethod?: string;
+    paymentMethod: string;
+
+    @Prop({
+        required: false,
+        type: Date
+    })
+    paymentDate?: Date;
+
+    @Prop({
+        required: false,
+        type: Date
+    })
+    shipmentDate?: Date;
+
+    @Prop({
+        required: false,
+        type: Date
+    })
+    completedDate?: Date;
 }
 
 export const OrderDatabaseName = 'orders';
