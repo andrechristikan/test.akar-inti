@@ -16,11 +16,18 @@ export class ProductService {
         limit: number,
         find?: Record<string, any>
     ): Promise<ProductDocument[]> {
-        return this.productModel.find(find).skip(offset).limit(limit).lean();
+        return this.productModel
+            .find({ ...find, quantity: { $ne: 0 } })
+            .skip(offset)
+            .limit(limit)
+            .lean();
     }
 
     async totalData(find?: Record<string, any>): Promise<number> {
-        return this.productModel.countDocuments(find);
+        return this.productModel.countDocuments({
+            ...find,
+            quantity: { $ne: 0 }
+        });
     }
 
     async findOneById(productId: string): Promise<ProductDocument> {
@@ -29,6 +36,7 @@ export class ProductService {
 
     async create(data: Record<string, any>): Promise<ProductDocument> {
         const create: ProductDocument = new this.productModel({
+            ...data,
             name: data.name,
             description: data.description,
             quantity: data.quantity || 0,
@@ -41,6 +49,7 @@ export class ProductService {
 
     async createMany(data: Record<string, any>[]): Promise<boolean> {
         const newData = data.map((val: Record<string, any>) => ({
+            ...val,
             name: val.name,
             description: val.description,
             quantity: val.quantity || 0,

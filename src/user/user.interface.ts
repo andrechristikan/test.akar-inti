@@ -13,4 +13,5 @@ export interface UserSavedPlaces {
     default: boolean;
     receiver: string;
     receiverPhone: string;
+    receiverEmail: string;
 }

@@ -79,9 +79,7 @@ export class CartService {
                 _id: cartId
             },
             {
-                $set: {
-                    products
-                }
+                products
             }
         );
     }

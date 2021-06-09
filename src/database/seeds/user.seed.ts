@@ -55,14 +55,16 @@ export class UserSeed {
                         name: 'rumah',
                         default: true,
                         receiver: 'andreck',
-                        receiverPhone: '081219968822'
+                        receiverPhone: '081219968822',
+                        receiverEmail: 'andreck@mail.com'
                     },
                     {
                         address: 'jalan kantor cadangan',
                         name: 'kantor',
                         default: false,
                         receiver: 'andreck',
-                        receiverPhone: '081219968822'
+                        receiverPhone: '081219968822',
+                        receiverEmail: 'andreck@mail.com'
                     }
                 ]
             });

@@ -122,8 +122,6 @@ export class OrderService {
         find: Record<string, any>,
         data: Record<string, any>
     ): Promise<OrderDocument> {
-        return this.orderModel.updateOne(find, {
-            $set: data
-        });
+        return this.orderModel.updateOne(find, data);
     }
 }

@@ -54,15 +54,12 @@ export class OrderController {
     async findAll(
         @Query('page', new DefaultValuePipe(PAGE), ParseIntPipe) page: number,
         @Query('perPage', new DefaultValuePipe(PER_PAGE), ParseIntPipe)
-        perPage: number,
-        @Query('status', new DefaultValuePipe(OrderStatus.Payment))
-        status: string
+        perPage: number
     ): Promise<IResponse> {
         const skip = await this.paginationService.skip(page, perPage);
-        const find: Record<string, any> = {};
-        if (status) {
-            find.status = { $in: status.split(',') };
-        }
+        const find: Record<string, any> = {
+            status: { $in: ['Paid', 'Shipment', 'Cancel', 'Completed'] }
+        };
 
         const orders: OrderDocument[] = await this.orderService.findAll(
             skip,
@@ -195,7 +192,8 @@ export class OrderController {
     async findOneById(@Param('orderId') orderId: string): Promise<IResponse> {
         const order: OrderDocumentFull = await this.orderService.findOne<OrderDocumentFull>(
             {
-                _id: Types.ObjectId(orderId)
+                _id: Types.ObjectId(orderId),
+                status: { $in: ['Paid', 'Shipment', 'Cancel', 'Completed'] }
             },
             true
         );
