@@ -51,7 +51,11 @@ export class RoleSeed {
                     'OrderUpdate',
                     'OrderRead',
                     'OrderDelete',
-                    'OrderList'
+                    'OrderList',
+                    'PaymentCreate',
+                    'PaymentUpdate',
+                    'PaymentRead',
+                    'PaymentList'
                 ]
             }
         });
@@ -78,7 +82,11 @@ export class RoleSeed {
             'CartRead',
             'CartDelete',
             'OrderCreate',
-            'OrderList'
+            'OrderList',
+            'PaymentCreate',
+            'PaymentUpdate',
+            'PaymentRead',
+            'PaymentList'
         ];
         const userPermissions = permissions
             .filter((val) => filterPermission.includes(val.name))

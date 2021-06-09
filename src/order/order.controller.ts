@@ -34,6 +34,8 @@ import { Types } from 'mongoose';
 import { OrderStatus } from './order.constant';
 import { CartDocument } from 'src/cart/cart.interface';
 import { CartService } from 'src/cart/cart.service';
+import { PaymentService } from 'src/payment/payment.service';
+import { PaymentDocument } from 'src/payment/payment.interface';
 
 @Controller('/order')
 export class OrderController {
@@ -42,7 +44,9 @@ export class OrderController {
         @Message() private readonly messageService: MessageService,
         @Pagination() private readonly paginationService: PaginationService,
         @Logger() private readonly logger: LoggerService,
-        private readonly orderService: OrderService
+        private readonly orderService: OrderService,
+        private readonly paymentService: PaymentService,
+        private readonly cartService: CartService
     ) {}
 
     @AuthJwtGuard()
@@ -125,6 +129,36 @@ export class OrderController {
     @AuthJwtGuard()
     @Permissions(PermissionList.OrderList)
     @ResponseStatusCode()
+    @Get('/shipment/:shipmentNumber')
+    async shipment(
+        @Param('shipmentNumber') shipmentNumber: string
+    ): Promise<IResponse> {
+        const order: OrderDocument[] = await this.orderService.findOne({
+            'shipment.number': shipmentNumber
+        });
+
+        if (!order) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'shipment'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.shipment.notFound')
+                )
+            );
+        }
+
+        return this.responseService.success(
+            this.messageService.get('order.shipment.success'),
+            order
+        );
+    }
+
+    @AuthJwtGuard()
+    @Permissions(PermissionList.OrderList)
+    @ResponseStatusCode()
     @Get('/list-detail/:orderId')
     async listDetail(
         @Param('orderId') orderId: string,
@@ -137,6 +171,18 @@ export class OrderController {
             },
             true
         );
+        if (!order) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'listDetail'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.listDetail.notFound')
+                )
+            );
+        }
 
         return this.responseService.success(
             this.messageService.get('order.listDetail.success'),
@@ -156,9 +202,15 @@ export class OrderController {
         try {
             const order: OrderDocument = await this.orderService.create(
                 data.place,
-                data.bank,
                 Types.ObjectId(userId)
             );
+
+            const cart: CartDocument = await this.cartService.findOne<CartDocument>(
+                {
+                    user: Types.ObjectId(userId)
+                }
+            );
+            await this.cartService.updateProducts(Types.ObjectId(cart._id), []);
 
             return this.responseService.success(
                 this.messageService.get('order.create.success'),
@@ -183,50 +235,137 @@ export class OrderController {
     @AuthJwtGuard()
     @Permissions(PermissionList.OrderRead, PermissionList.OrderUpdate)
     @ResponseStatusCode()
-    @Patch('/update-status/:orderId')
-    async updateStatus(
-        @Param('orderId') orderId: string,
-        @Body()
-        data: Record<string, any>
-    ): Promise<IResponse> {
-        const order: OrderDocument = await this.orderService.findOne<OrderDocument>(
+    @Patch('/update-payment/:orderId')
+    async updatePayment(@Param('orderId') orderId: string): Promise<IResponse> {
+        const check: OrderDocument = await this.orderService.findOne<OrderDocument>(
             {
                 _id: Types.ObjectId(orderId)
             }
         );
+        if (!check) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updatePayment'
+            });
 
-        const update: Record<string, any> = {
-            status: OrderStatus[data.status]
-        };
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.updatePayment.notFound')
+                )
+            );
+        }
 
-        if (OrderStatus[data.status] === OrderStatus[OrderStatus.Paid]) {
-            update.paymentDate = new Date();
-        } else if (
-            OrderStatus[data.status] === OrderStatus[OrderStatus.Shipment]
-        ) {
-            update.shipmentDate = new Date();
-        } else if (
-            OrderStatus[data.status] === OrderStatus[OrderStatus.Completed]
-        ) {
-            update.completedDate = new Date();
+        const payment = this.paymentService.findOne<PaymentDocument>({
+            order: Types.ObjectId(check._id)
+        });
+        if (!payment) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updatePayment'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get(
+                        'order.updatePayment.paymentNotFound'
+                    )
+                )
+            );
         }
 
         try {
             await this.orderService.updateOne(
                 {
-                    _id: Types.ObjectId(order._id)
+                    _id: Types.ObjectId(check._id)
                 },
-                update
+                {
+                    status: OrderStatus[OrderStatus.Paid],
+                    payment: {
+                        date: new Date()
+                    }
+                }
             );
 
             return this.responseService.success(
-                this.messageService.get('order.create.success'),
-                order
+                this.messageService.get('order.updatePayment.success')
             );
         } catch (err: any) {
-            this.logger.error('create try catch', {
+            this.logger.error('updatePayment try catch', {
                 class: 'OrderController',
-                function: 'create',
+                function: 'updatePayment',
+                error: err
+            });
+            throw new InternalServerErrorException(
+                this.responseService.error(
+                    this.messageService.get(
+                        'http.serverError.internalServerError'
+                    )
+                )
+            );
+        }
+    }
+
+    @AuthJwtGuard()
+    @Permissions(PermissionList.OrderRead, PermissionList.OrderUpdate)
+    @ResponseStatusCode()
+    @Patch('/update-shipment/:orderId')
+    async updateShipment(
+        @Param('orderId') orderId: string,
+        @Body()
+        data: Record<string, any>
+    ): Promise<IResponse> {
+        const check: OrderDocument = await this.orderService.findOne<OrderDocument>(
+            {
+                _id: Types.ObjectId(orderId)
+            }
+        );
+        if (!check) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updateShipment'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.updateShipment.notFound')
+                )
+            );
+        } else if (check.status !== OrderStatus[OrderStatus.Paid]) {
+            this.logger.error('order Error', {
+                class: 'OrderController',
+                function: 'updateShipment'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get(
+                        'order.updateShipment.statusNotMatch'
+                    )
+                )
+            );
+        }
+
+        try {
+            await this.orderService.updateOne(
+                {
+                    _id: Types.ObjectId(check._id)
+                },
+                {
+                    status: OrderStatus[OrderStatus.Shipment],
+                    shipment: {
+                        date: new Date(),
+                        number: data.number
+                    }
+                }
+            );
+
+            return this.responseService.success(
+                this.messageService.get('order.updateShipment.success')
+            );
+        } catch (err: any) {
+            this.logger.error('updateShipment try catch', {
+                class: 'OrderController',
+                function: 'updateShipment',
                 error: err
             });
             throw new InternalServerErrorException(

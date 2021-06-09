@@ -104,6 +104,18 @@ export class PermissionSeed {
                 },
                 {
                     name: 'OrderDelete'
+                },
+                {
+                    name: 'PaymentCreate'
+                },
+                {
+                    name: 'PaymentUpdate'
+                },
+                {
+                    name: 'PaymentRead'
+                },
+                {
+                    name: 'PaymentList'
                 }
             ]);
 
@@ -156,7 +168,11 @@ export class PermissionSeed {
                         'OrderUpdate',
                         'OrderRead',
                         'OrderList',
-                        'OrderDelete'
+                        'OrderDelete',
+                        'PaymentCreate',
+                        'PaymentUpdate',
+                        'PaymentRead',
+                        'PaymentList'
                     ]
                 }
             });

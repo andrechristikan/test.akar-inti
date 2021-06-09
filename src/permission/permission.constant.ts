@@ -39,7 +39,13 @@ export enum PermissionList {
     OrderUpdate = 'OrderUpdate',
     OrderRead = 'OrderRead',
     OrderList = 'OrderList',
-    OrderDelete = 'OrderDelete'
+    OrderDelete = 'OrderDelete',
+
+    // Payment
+    PaymentCreate = 'PaymentCreate',
+    PaymentUpdate = 'PaymentUpdate',
+    PaymentRead = 'PaymentRead',
+    PaymentList = 'PaymentList'
 }
 
 export const PERMISSION_KEY = 'permissions';

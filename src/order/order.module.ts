@@ -4,6 +4,8 @@ import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { OrderDatabaseName, OrderEntity, OrderSchema } from './order.schema';
 import { CartModule } from 'src/cart/cart.module';
+import { PaymentService } from 'src/payment/payment.service';
+import { PaymentModule } from 'src/payment/payment.module';
 
 @Module({
     controllers: [OrderController],
@@ -17,6 +19,8 @@ import { CartModule } from 'src/cart/cart.module';
                 collection: OrderDatabaseName
             }
         ]),
+        CartModule,
+        PaymentModule,
         CartModule
     ]
 })

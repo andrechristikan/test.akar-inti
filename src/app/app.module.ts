@@ -21,6 +21,7 @@ import { SeedsModule } from 'src/database/seeds/seeds.module';
 import { ProductModule } from 'src/product/product.module';
 import { CartModule } from 'src/cart/cart.module';
 import { OrderModule } from 'src/order/order.module';
+import { PaymentModule } from 'src/payment/payment.module';
 
 @Module({
     controllers: [AppController],
@@ -61,7 +62,8 @@ import { OrderModule } from 'src/order/order.module';
         UserModule,
         ProductModule,
         CartModule,
-        OrderModule
+        OrderModule,
+        PaymentModule
     ]
 })
 export class AppModule {}

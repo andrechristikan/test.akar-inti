@@ -8,7 +8,7 @@ import { UserEntity } from 'src/user/user.schema';
 import { CartService } from 'src/cart/cart.service';
 import { CartDocumentFull } from 'src/cart/cart.interface';
 import { OrderStatus } from './order.constant';
-import { ListOfBank, PaymentMethod } from 'src/payment/payment.constant';
+import { ListOfBank } from 'src/payment/payment.constant';
 
 @Injectable()
 export class OrderService {
@@ -69,7 +69,6 @@ export class OrderService {
 
     async create(
         place: Record<string, any>,
-        bank: ListOfBank,
         user: Types.ObjectId
     ): Promise<OrderDocument> {
         const data: CartDocumentFull = await this.cartService.findOne<CartDocumentFull>(
@@ -95,8 +94,6 @@ export class OrderService {
             user,
             products: products,
             place,
-            bank: bank,
-            paymentMethod: PaymentMethod[PaymentMethod.BankTransfer],
             status: OrderStatus[OrderStatus.Payment]
         });
 
@@ -127,12 +124,7 @@ export class OrderService {
         data: Record<string, any>
     ): Promise<OrderDocument> {
         return this.orderModel.updateOne(find, {
-            $set: {
-                status: data.status,
-                paymentDate: data.paymentDate,
-                shipmentDate: data.shipmentDate,
-                completedDate: data.completedDate
-            }
+            $set: data
         });
     }
 }
