@@ -6,37 +6,37 @@ This project is Restful API that used [NestJs](https://docs.nestjs.com/) as engi
 #### This project will follow this instruction
 Detail for [assignment](assignment.docx)
 ```
-	[x]	Order transaction involves the following actors: customer and admin.
+[x]	Order transaction involves the following actors: customer and admin.
 
-	[x]	Product dictionary → free to define product metadata and values as necessary, can be hardcoded,
-		1. Product has quantity; product with quantity 0 can not be ordered
+[x]	Product dictionary → free to define product metadata and values as necessary, can be hardcoded,
+	1. Product has quantity; product with quantity 0 can not be ordered
 
-	[x]	Order transaction process flow and verification; single transaction has the following steps:
-		1. Customer can add product to an order
-		2. Customer can submit an order and the order is finalized
-		3. Customers can only pay via bank transfer
-		4. When placing an order the following data is required: name, phone number, email, address
-		5. When an order is submitted, the quantity for the ordered product will be reduced based on the quantity.
-		6. An order is successfully submitted if all ordered products are available.
-		7. After an order is submitted, customer will be required to submit payment proof
-		8. After an order is submitted, the order is accessible to admin and ready to be processed
-		9. Admin can view order detail
-		10.	Admin can verify the validity of order data: customer name, phone, email, address, payment proof
-			- Given an order is valid, then Admin will prepare the ordered items for shipment
-			- Given and order is invalid, then Admin can cancel the order
-		11. Admin can mark the order as shipped and update the order with Shipping ID
-		12.	Customer can check the order status for the submitted order
-		13. Customer can check the shipment status for the submitted order using Shipping ID
+[x]	Order transaction process flow and verification; single transaction has the following steps:
+	1. Customer can add product to an order
+	2. Customer can submit an order and the order is finalized
+	3. Customers can only pay via bank transfer
+	4. When placing an order the following data is required: name, phone number, email, address
+	5. When an order is submitted, the quantity for the ordered product will be reduced based on the quantity.
+	6. An order is successfully submitted if all ordered products are available.
+	7. After an order is submitted, customer will be required to submit payment proof
+	8. After an order is submitted, the order is accessible to admin and ready to be processed
+	9. Admin can view order detail
+	10.	Admin can verify the validity of order data: customer name, phone, email, address, payment proof
+		- Given an order is valid, then Admin will prepare the ordered items for shipment
+		- Given and order is invalid, then Admin can cancel the order
+	11. Admin can mark the order as shipped and update the order with Shipping ID
+	12.	Customer can check the order status for the submitted order
+	13. Customer can check the shipment status for the submitted order using Shipping ID
 ```
 
 ## Features
 Futures :
 ```
-	[x] JsonWenToken
-	[x] Server Side Pagination
-	[x] Support File Logging
-	[x] Role Management with Permission Accessibility
-	[x] Database Migration
+[x] JsonWenToken
+[x] Server Side Pagination
+[x] Support File Logging
+[x] Role Management with Permission Accessibility
+[x] Database Migration
 ```
 ## Prerequisites
 We must to install some component to run this project
@@ -67,24 +67,27 @@ Assume our endpoint in `localhost:3000`
 - Body `null`
 - Header `not need credentials`
 ```
-	- Code: 200
-	- Body: 
-	{
-		"statusCode": 200,
-		"message": "This is test endpoint."
-	}
+- Code: 200
+- Body: 
+{
+	"statusCode": 200,
+	"message": "This is test endpoint."
+}
 ```
 
 ## Credentials
 Credentials for this project
 #### Database
-	- Database Name: ack
-	- User: ack
-	- Password: ack123
+```
+- Database Name: ack
+- User: ack
+- Password: ack123
+```
 #### App
-	- Host: localhost
-	- Port: 3000
-
+```
+- Host: localhost
+- Port: 3000
+```
 ## Endpoint
 All endpoints in [akar-init.collection.json](akar-init.collection.json). If we want to use json file, we must import to Postman back. [Follow this step for import into Postman](https://learning.postman.com/docs/getting-started/importing-and-exporting-data/)
 
