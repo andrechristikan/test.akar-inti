@@ -31,6 +31,8 @@ export class DatabaseService implements MongooseOptionsFactory {
 
         uri = `${uri}${baseUrl}/${databaseName}`;
 
+        console.log(uri);
+
         mongoose.set('debug', this.configService.get('app.debug') || false);
         return {
             uri,

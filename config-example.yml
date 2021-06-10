@@ -1,12 +1,12 @@
 http:
-  host: 'localhost'
+  host: '0.0.0.0'
   port: 3000
 
 database:
-  url: 'localhost:27017'
+  url: 'mongodb:27017'
   name: 'ack'
-  user: ''
-  password: ''
+  user: 'ack'
+  password: 'ack123'
 
 app:
   env: 'development'
