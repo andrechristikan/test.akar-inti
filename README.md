@@ -50,7 +50,7 @@ We must to install some component to run this project
 
 
 ## How to
-Step by step implementation
+Step by step implementation, this project will using docker container. Why we should to use docker container? Because Docker containers encapsulate everything an application needs to run (and only those things), they allow applications to be shuttled easily between environments. Its will help us to solve application dependency between environments.
 1. Install *Docker* and *Docker Compose*, you can follow the step from [docker docs](https://docs.docker.com/get-docker/) and this for [docker compose docs](https://docs.docker.com/compose/install/)
 2. Copy or move `config-example.yml` to `config.yml` in root dir of project.
 3. Run bash script to up Docker Service `docker-compose up` or `docker-compose down` to take down Docker Service.
