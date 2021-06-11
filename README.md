@@ -34,11 +34,11 @@ Order transaction process flow and verification; single transaction has the foll
 ## Features
 Futures :
 ```
-[x] JsonWenToken
-[x] Server Side Pagination
-[x] Support File Logging
-[x] Role Management with Permission Accessibility
-[x] Database Migration
+[x] Tracking Shipment
+[x] Tracking Order
+[x] Cart
+[x] Role Admin and User
+[x] Database Migration for initial project
 ```
 ## Prerequisites
 We must to install some component to run this project
