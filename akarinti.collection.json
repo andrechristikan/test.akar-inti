@@ -1,13 +1,35 @@
 {
 	"info": {
 		"_postman_id": "a84ba91b-5f68-4e2f-afd7-a6bad4a89ea6",
-		"name": "New Collection",
+		"name": "akarinti",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "admin",
 			"item": [
+				{
+					"name": "role",
+					"item": [
+						{
+							"name": "get alll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/role",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"role"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
 				{
 					"name": "user",
 					"item": [
@@ -489,7 +511,7 @@
 				"bearer": [
 					{
 						"key": "token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGMwZmNlOTUzMTA0YzFhOTk2MjRjMWUiLCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwiZmlyc3ROYW1lIjoiYWRtaW4iLCJsYXN0TmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4iLCJwZXJtaXNzaW9ucyI6WyJVc2VyQ3JlYXRlIiwiVXNlclVwZGF0ZSIsIlVzZXJSZWFkIiwiVXNlckRlbGV0ZSIsIlByb2R1Y3RDcmVhdGUiLCJQcm9kdWN0VXBkYXRlIiwiUHJvZHVjdFJlYWQiLCJQcm9kdWN0RGVsZXRlIiwiT3JkZXJDcmVhdGUiLCJPcmRlclVwZGF0ZSIsIk9yZGVyUmVhZCIsIlBheW1lbnRDcmVhdGUiLCJQYXltZW50UmVhZCIsIlBheW1lbnREZWxldGUiXSwiaWF0IjoxNjIzMjYwNTA5LCJleHAiOjE2MjMzNDY5MDl9.2vRIE3yWxAsMKoDg_a44-erObd8Ommo6NA7cKsXxfzY",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGMyZjBmYjgzMWM3MjAwZTEzOTMzMDYiLCJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwiZmlyc3ROYW1lIjoiYWRtaW4iLCJsYXN0TmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4iLCJwZXJtaXNzaW9ucyI6WyJVc2VyQ3JlYXRlIiwiVXNlclVwZGF0ZSIsIlVzZXJSZWFkIiwiVXNlckRlbGV0ZSIsIlJvbGVSZWFkIiwiUHJvZHVjdENyZWF0ZSIsIlByb2R1Y3RVcGRhdGUiLCJQcm9kdWN0UmVhZCIsIlByb2R1Y3REZWxldGUiLCJPcmRlckNyZWF0ZSIsIk9yZGVyVXBkYXRlIiwiT3JkZXJSZWFkIiwiUGF5bWVudENyZWF0ZSIsIlBheW1lbnRSZWFkIiwiUGF5bWVudERlbGV0ZSJdLCJpYXQiOjE2MjMzODg0NjksImV4cCI6MTYyMzM5MjA2OX0.aF2pMP45D8i7EHZMzVrDYpNP7RQbKvsHudsIHcqONns",
 						"type": "string"
 					}
 				]
@@ -628,7 +650,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"product\": \"60c0ef0ff1a87415ca39242e\",\n    \"quantity\": 10\n}",
+									"raw": "{\n    \"product\": \"60c2e2bfcbb66800d510444f\",\n    \"quantity\": 10\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -655,7 +677,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"product\": \"60c0ef0ff1a87415ca39242d\",\n    \"quantity\": 4\n}",
+									"raw": "{\n    \"product\": \"60c2e2bfcbb66800d5104451\",\n    \"quantity\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -861,7 +883,7 @@
 				"bearer": [
 					{
 						"key": "token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGMwZmNlZDUzMTA0YzFhOTk2MjRjMWYiLCJlbWFpbCI6ImFuZHJlY2tAbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJhbmRyZSIsImxhc3ROYW1lIjoiY2siLCJyb2xlIjoiQ3VzdG9tZXIiLCJwZXJtaXNzaW9ucyI6WyJQcm9maWxlVXBkYXRlIiwiUHJvZmlsZVJlYWQiLCJQcm9kdWN0TGlzdCIsIkNhcnRDcmVhdGUiLCJDYXJ0VXBkYXRlIiwiQ2FydFJlYWQiLCJPcmRlckNyZWF0ZSIsIk9yZGVyTGlzdCIsIlBheW1lbnRDcmVhdGUiLCJQYXltZW50TGlzdCJdLCJpYXQiOjE2MjMyNjA0NDksImV4cCI6MTYyMzM0Njg0OX0.IvckRzAkpVTMQSGWCFFlmpwUeBWKA-4BLnL2WNTfuzc",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGMyZjBmZjgzMWM3MjAwZTEzOTMzMDciLCJlbWFpbCI6ImFuZHJlY2tAbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJhbmRyZSIsImxhc3ROYW1lIjoiY2siLCJyb2xlIjoiQ3VzdG9tZXIiLCJwZXJtaXNzaW9ucyI6WyJQcm9maWxlVXBkYXRlIiwiUHJvZmlsZVJlYWQiLCJQcm9kdWN0TGlzdCIsIkNhcnRDcmVhdGUiLCJDYXJ0VXBkYXRlIiwiQ2FydFJlYWQiLCJPcmRlckNyZWF0ZSIsIk9yZGVyTGlzdCIsIlBheW1lbnRDcmVhdGUiLCJQYXltZW50TGlzdCJdLCJpYXQiOjE2MjMzODg0MzksImV4cCI6MTYyMzM5MjAzOX0.pxgiaUTQrTcGDxxU49ErIYt-dgn4T2P0b7x7MgHXLus",
 						"type": "string"
 					}
 				]
@@ -886,6 +908,50 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"andreck@mail.com\",\r\n    \"password\":\"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hello",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/hello",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"hello"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

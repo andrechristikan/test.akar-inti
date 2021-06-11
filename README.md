@@ -91,7 +91,7 @@ Credentials for this project
 - Port: 3000
 ```
 ## Endpoint
-All endpoints in [akar-init.collection.json](akar-init.collection.json). If we want to use json file, we must import to Postman back. [Follow this step for import into Postman](https://learning.postman.com/docs/getting-started/importing-and-exporting-data/)
+All endpoints in [akarinit.collection.json](akar-init.collection.json). If we want to use json file, we must import to Postman back. [Follow this step for import into Postman](https://learning.postman.com/docs/getting-started/importing-and-exporting-data/)
 
 The Description about endpoints
 #### General
