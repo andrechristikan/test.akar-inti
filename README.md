@@ -46,7 +46,6 @@ We must to install some component to run this project
 2. [MongoDB](https://docs.mongodb.com/) and [MongoDb Client](https://robomongo.org/)
 3. [Docker](https://docs.docker.com/)
 4. [Postman](https://www.postman.com/)
-5. Git - [Window](https://git-scm.com/downloads), [Linux](https://git-scm.com/download/linux), [Mac](https://www.atlassian.com/git/tutorials/install-git)
 
 
 ## How to
