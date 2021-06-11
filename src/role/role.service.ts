@@ -20,6 +20,13 @@ export class RoleService {
         return this.roleModel.find(find).skip(offset).limit(limit).limit(1);
     }
 
+    
+    async totalData(find?: Record<string, any>): Promise<number> {
+        return this.roleModel.countDocuments({
+            ...find
+        });
+    }
+
     async findOneById<T>(roleId: string, populate?: boolean): Promise<T> {
         const role = this.roleModel.findById(roleId);
 

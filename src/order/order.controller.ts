@@ -33,6 +33,8 @@ import { CartService } from 'src/cart/cart.service';
 import { PaymentService } from 'src/payment/payment.service';
 import { PaymentDocument } from 'src/payment/payment.interface';
 import { ProductService } from 'src/product/product.service';
+import { UserService } from 'src/user/user.service';
+import { UserDocument } from 'src/user/user.interface';
 
 @Controller('/order')
 export class OrderController {
@@ -44,7 +46,8 @@ export class OrderController {
         private readonly orderService: OrderService,
         private readonly paymentService: PaymentService,
         private readonly cartService: CartService,
-        private readonly productService: ProductService
+        private readonly productService: ProductService,
+        private readonly userService: UserService
     ) {}
 
     @AuthJwtGuard()
@@ -230,6 +233,7 @@ export class OrderController {
                 user: Types.ObjectId(userId)
             }
         );
+        const user: UserDocument = await this.userService.findOneById(userId);
         if (!cart) {
             this.logger.error('create Error', {
                 class: 'OrderController',
@@ -250,6 +254,17 @@ export class OrderController {
             throw new BadRequestException(
                 this.responseService.error(
                     this.messageService.get('order.updatePayment.productNull')
+                )
+            );
+        }else if(!user.savedPlaces || user.savedPlaces.length === 0 || !user.savedPlaces[data.place]){
+            this.logger.error('create Error', {
+                class: 'OrderController',
+                function: 'create'
+            });
+
+            throw new BadRequestException(
+                this.responseService.error(
+                    this.messageService.get('order.updatePayment.placeNotFound')
                 )
             );
         }
@@ -281,7 +296,7 @@ export class OrderController {
         });
         const productOut = productsStock.filter((val) => val.next === false);
         const productIn: Record<string, any>[] = productsStock.filter(
-            (val) => val.next === true
+            (val: Record<string,any>) => val.next === true
         );
 
         if (productOut.length > 0) {
@@ -307,7 +322,7 @@ export class OrderController {
 
         try {
             const order: OrderDocument = await this.orderService.create(
-                data.place,
+                user.savedPlaces[data.place],
                 Types.ObjectId(userId)
             );
             await this.cartService.updateProducts(Types.ObjectId(cart._id), []);

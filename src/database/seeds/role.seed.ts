@@ -28,6 +28,7 @@ export class RoleSeed {
             'UserUpdate',
             'UserRead',
             'UserDelete',
+            'RoleRead',
             'ProductCreate',
             'ProductUpdate',
             'ProductRead',

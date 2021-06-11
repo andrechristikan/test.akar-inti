@@ -5,6 +5,9 @@ export enum PermissionList {
     UserRead = 'UserRead',
     UserDelete = 'UserDelete',
 
+    // Role
+    RoleRead = 'RoleRead',
+
     // Profile
     ProfileUpdate = 'ProfileUpdate',
     ProfileRead = 'ProfileRead',

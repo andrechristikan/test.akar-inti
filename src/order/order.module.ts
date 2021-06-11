@@ -6,6 +6,7 @@ import { OrderDatabaseName, OrderEntity, OrderSchema } from './order.schema';
 import { CartModule } from 'src/cart/cart.module';
 import { PaymentModule } from 'src/payment/payment.module';
 import { ProductModule } from 'src/product/product.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
     controllers: [OrderController],
@@ -22,7 +23,8 @@ import { ProductModule } from 'src/product/product.module';
         CartModule,
         forwardRef(() => PaymentModule),
         CartModule,
-        ProductModule
+        ProductModule,
+        UserModule
     ]
 })
 export class OrderModule {}

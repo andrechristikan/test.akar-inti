@@ -33,6 +33,9 @@ export class PermissionSeed {
                     name: 'UserDelete'
                 },
                 {
+                    name: 'RoleRead'
+                },
+                {
                     name: 'ProfileUpdate'
                 },
                 {

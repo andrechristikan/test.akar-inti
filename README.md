@@ -98,6 +98,8 @@ The Description about endpoints
 1. `Login`: login endpoint
 2. `Hello`: Test Endpoint
 #### Admin
+1. Role
+	- `Get All`: Get all roles
 1. User
 	- `Create`: Create new user based role
 	- `Get By Id`: Get user by Id

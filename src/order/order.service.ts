@@ -86,7 +86,8 @@ export class OrderService {
         place = {
             address: place.address,
             receiver: place.receiver,
-            receiverPhone: place.receiverPhone
+            receiverPhone: place.receiverPhone,
+            receiverEmail: place.receiverEmail
         };
 
         const create: OrderDocument = new this.orderModel({
